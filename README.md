@@ -40,7 +40,7 @@ uvicorn app_premium:app --reload
 
 Open:
 
-http://127.0.0.1:8000
+http://12......
 Workflow
 Transaction
     ↓
