@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Review</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:#f4f6f8;
+    color:#18212b;
+  }
+  .topbar{
+    height:64px;background:#fff;border-bottom:1px solid #e3e7eb;
+    display:flex;align-items:center;justify-content:space-between;padding:0 38px;
+  }
+  .brand{font-size:17px;font-weight:700;letter-spacing:-.2px}
+  .brand span{color:#2563eb}
+  .status{font-size:12px;color:#5d6875;display:flex;gap:8px;align-items:center}
+  .dot{width:7px;height:7px;border-radius:50%;background:#22a06b}
+  main{max-width:1180px;margin:34px auto;padding:0 24px}
+  .heading{margin-bottom:22px}
+  .heading h1{font-size:25px;margin:0 0 5px;font-weight:650;letter-spacing:-.5px}
+  .heading p{margin:0;color:#697586;font-size:14px}
+  .layout{display:grid;grid-template-columns:1.55fr .9fr;gap:20px;align-items:start}
+  .card{
+    background:#fff;border:1px solid #e1e6eb;border-radius:10px;
+    box-shadow:0 1px 2px rgba(16,24,40,.03);
+  }
+  .card-head{padding:20px 22px 15px;border-bottom:1px solid #edf0f2}
+  .card-head h2{font-size:15px;margin:0 0 3px;font-weight:650}
+  .card-head p{font-size:12px;color:#7a8592;margin:0}
+  form{padding:20px 22px 22px}
+  .section-title{
+    font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+    color:#8a95a1;font-weight:700;margin:2px 0 13px;
+  }
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px 16px;margin-bottom:22px}
+  label{font-size:12px;font-weight:600;color:#4b5563;display:block;margin-bottom:7px}
+  input,select{
+    width:100%;height:40px;border:1px solid #d7dde3;border-radius:6px;
+    background:#fff;padding:0 11px;font:inherit;font-size:13px;color:#202a35;
+    outline:none;transition:.15s;
+  }
+  input:focus,select:focus{border-color:#7aa2e8;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+  .hint{font-size:10px;color:#929ba6;margin-top:5px}
+  .actions{display:flex;justify-content:flex-end;gap:10px;border-top:1px solid #edf0f2;padding-top:17px}
+  button{
+    height:39px;border-radius:6px;padding:0 18px;border:1px solid #d6dce2;
+    background:#fff;color:#46515d;font-weight:600;cursor:pointer
+  }
+  button.primary{background:#1f5fd1;border-color:#1f5fd1;color:#fff}
+  button:hover{filter:brightness(.97)}
+  .risk{padding:22px;min-height:430px}
+  .risk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+  .risk-top h2{font-size:15px;margin:0;font-weight:650}
+  .tag{font-size:10px;font-weight:700;color:#5f6b78;background:#f1f3f5;padding:5px 8px;border-radius:4px}
+  .score-wrap{text-align:center;padding:10px 0 30px}
+  .ring{
+    width:154px;height:154px;border-radius:50%;margin:0 auto 17px;
+    border:11px solid #edf0f3;display:flex;align-items:center;justify-content:center;
+  }
+  .ring-inner strong{display:block;font-size:30px;line-height:1;font-weight:700;color:#27313b}
+  .ring-inner span{font-size:11px;color:#89929d}
+  .idle-title{font-size:16px;font-weight:650;margin-bottom:5px}
+  .idle-text{font-size:12px;color:#7d8792;line-height:1.55;max-width:260px;margin:auto}
+  .result{display:none}
+  .result.show{display:block}
+  .idle.hide{display:none}
+  .result-line{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #edf0f2;font-size:12px}
+  .result-line span:first-child{color:#7a8591}
+  .result-line span:last-child{font-weight:650}
+  .decision{margin-top:18px;padding:14px;border-radius:7px;background:#f5f7f9}
+  .decision strong{font-size:14px;display:block;margin-bottom:4px}
+  .decision p{font-size:11px;color:#6f7a86;margin:0;line-height:1.5}
+  .footer-note{font-size:10px;color:#98a1ab;margin-top:15px;line-height:1.5}
+  @media(max-width:850px){.layout{grid-template-columns:1fr}.risk{min-height:auto}}
+  @media(max-width:600px){
+    .topbar{padding:0 18px}main{margin:22px auto;padding:0 14px}.grid{grid-template-columns:1fr}
+    .card-head,form,.risk{padding-left:16px;padding-right:16px}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Fraud<span>Shield</span></div>
+  <div class="status"><i class="dot"></i> Screening service online</div>
+</header>
+
+<main>
+  <div class="heading">
+    <h1>Transaction review</h1>
+    <p>Check a card transaction for potential fraud risk before completing the review.</p>
+  </div>
+
+  <div class="layout">
+    <section class="card">
+      <div class="card-head">
+        <h2>Transaction details</h2>
+        <p>Enter the information available for this transaction.</p>
+      </div>
+
+      <form id="form">
+        <div class="section-title">Transaction</div>
+        <div class="grid">
+          <div><label>Transaction amount</label><input id="transaction_amount" type="number" step="0.01" min="0" placeholder="e.g. 125.50" required></div>
+          <div><label>Merchant category</label><select id="merchant_category" required>
+            <option value="">Select category</option>
+            <option>atm_withdrawal</option><option>clothing</option><option>digital_goods</option><option>electronics</option><option>entertainment</option><option>gas_station</option><option>grocery</option><option>healthcare</option><option>home_improvement</option><option>jewelry</option><option>online_retail</option><option>restaurant</option><option>subscription</option><option>travel</option><option>utilities</option>
+          </select></div>
+          <div><label>Payment method</label><select id="payment_method" required><option value="">Select method</option><option>credit_card</option><option>debit_card</option><option>digital_wallet</option></select></div>
+          <div><label>Customer age</label><input id="customer_age" type="number" min="18" max="100" placeholder="e.g. 34" required></div>
+        </div>
+
+        <div class="section-title">Location & device</div>
+        <div class="grid">
+          <div><label>Billing country</label><select id="billing_country" required><option value="">Select country</option>
+            <option>AE</option><option>AU</option><option>BR</option><option>CA</option><option>CN</option><option>DE</option><option>FR</option><option>GB</option><option>IN</option><option>JP</option><option>MX</option><option>NG</option><option>RU</option><option>SG</option><option>US</option>
+          </select></div>
+          <div><label>Transaction country</label><select id="transaction_country" required><option value="">Select country</option>
+            <option>AE</option><option>AU</option><option>BR</option><option>CA</option><option>CN</option><option>DE</option><option>FR</option><option>GB</option><option>IN</option><option>JP</option><option>MX</option><option>NG</option><option>RU</option><option>SG</option><option>US</option>
+          </select></div>
+          <div><label>Distance from home (km)</label><input id="distance_from_home_km" type="number" min="0" step="0.1" placeholder="e.g. 4.5" required></div>
+          <div><label>Device type</label><select id="device_type" required><option value="">Select device</option><option>desktop</option><option>mobile</option><option>pos_terminal</option><option>tablet</option></select></div>
+        </div>
+
+        <div class="section-title">Authentication</div>
+        <div class="grid">
+          <div><label>Authentication method</label><select id="authentication_method" required><option value="">Select method</option><option>biometric</option><option>none</option><option>otp</option><option>password</option><option>pin</option></select></div>
+          <div><label>Transaction hour</label><input id="transaction_hour" type="number" min="0" max="23" placeholder="0–23" required><div class="hint">Use 24-hour format.</div></div>
+        </div>
+
+        <div class="actions">
+          <button type="reset" id="resetBtn">Clear</button>
+          <button class="primary" type="submit" id="submitBtn">Run fraud check</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="card risk">
+      <div class="risk-top"><h2>Risk assessment</h2><span class="tag">XGBoost</span></div>
+
+      <div class="idle" id="idle">
+        <div class="score-wrap">
+          <div class="ring"><div class="ring-inner"><strong>—</strong><span>risk score</span></div></div>
+          <div class="idle-title">Awaiting transaction</div>
+          <div class="idle-text">Submit the transaction details to generate a fraud-risk assessment.</div>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="score-wrap">
+          <div class="ring" id="ring"><div class="ring-inner"><strong id="score">0%</strong><span>fraud probability</span></div></div>
+          <div class="idle-title" id="decisionTitle">Assessment complete</div>
+        </div>
+        <div class="result-line"><span>Decision</span><span id="decision">—</span></div>
+        <div class="result-line"><span>Risk level</span><span id="riskLevel">—</span></div>
+        <div class="result-line"><span>Checked at</span><span id="checkedAt">—</span></div>
+        <div class="decision"><strong id="summary">—</strong><p id="summaryText">—</p></div>
+        <div class="footer-note">This result is generated by the trained fraud-detection model and should be used as a screening signal.</div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+const ids=["transaction_amount","merchant_category","payment_method","billing_country","transaction_country","customer_age","device_type","authentication_method","distance_from_home_km","transaction_hour"];
+const form=document.getElementById("form");
+const submit=document.getElementById("submitBtn");
+const idle=document.getElementById("idle");
+const result=document.getElementById("result");
+
+form.addEventListener("submit", async e=>{
+  e.preventDefault();
+  submit.disabled=true; submit.textContent="Checking...";
+  const data={};
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    data[id]=["transaction_amount","distance_from_home_km"].includes(id)?Number(el.value):
+             ["customer_age","transaction_hour"].includes(id)?Number(el.value):el.value;
+  });
+  try{
+    const res=await fetch("/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    const out=await res.json();
+    if(!res.ok) throw new Error(out.detail||"Request failed");
+    const p=Number(out.fraud_probability);
+    document.getElementById("score").textContent=p.toFixed(1)+"%";
+    document.getElementById("decision").textContent=out.prediction;
+    document.getElementById("riskLevel").textContent=out.risk_level;
+    document.getElementById("checkedAt").textContent=out.analyzed_at||"Just now";
+    const ring=document.getElementById("ring");
+    ring.style.borderColor = p >= 50 ? "#e0a2a2" : "#a9cdbd";
+    document.getElementById("decisionTitle").textContent=p>=50?"Review recommended":"Low fraud indication";
+    document.getElementById("summary").textContent=p>=50?"Potentially suspicious transaction":"No strong fraud signal detected";
+    document.getElementById("summaryText").textContent=p>=50?"The model has classified this transaction above the configured fraud threshold.":"The model has classified this transaction below the configured fraud threshold.";
+    idle.classList.add("hide"); result.classList.add("show");
+  }catch(err){ alert(err.message); }
+  finally{submit.disabled=false;submit.textContent="Run fraud check";}
+});
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  idle.classList.remove("hide"); result.classList.remove("show");
+  document.getElementById("score").textContent="0%";
+  document.getElementById("ring").style.borderColor="#edf0f3";
+});
+</script>
+</body>
+</html>

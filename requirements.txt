@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+scikit-learn
+xgboost
+joblib
+pydantic
+pyngrok
+nest-asyncio
